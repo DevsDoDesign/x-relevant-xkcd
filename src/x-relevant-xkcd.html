@@ -1,49 +1,78 @@
 <!-- Import Polymer -->
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="x-relevant-xkcd" attributes="keywords">
+<polymer-element name="x-relevant-xkcd" attributes="id keywords">
 	<template>
-		<img src="http://explainxkcd.com{{src}}">
+		<img src="{{src}}">
 	</template>
 
 	<script>
 		Polymer('x-relevant-xkcd', {
-			src: '/wiki/images/6/6c/actors.png',
-			query: null,
+			src: 'http://explainxkcd.com/wiki/images/6/6c/actors.png',
+			id: null,
+			keywords: null,
 
-			readyStateHandler: function(xhr, callback) {
-				if (xhr.readyState !== 4) return;
+			request: function() {
+				var xhr = new XMLHttpRequest();
+				this.readyStateHandler(xhr, this.parse);
 
-				if (xhr.status === 200) {
-					// Xhr success
-					console.log('suuc', xhr.response);
+				query = this.createQuery();
+
+				xhr.open(this.config.method, this.config.url + query);
+
+				xhr.send();
+			},
+
+			createQuery: function() {
+				if (this.keywords) {
+					return 'relevant' + this.keywords.split(' ').join('%20');
+				}
+				else if (this.id) {
+					return 'comic' + this.id;
 				}
 				else {
-					// Xhr fail
-					console.log('fail');
+					return 'comic';
 				}
 			},
 
-			request: function(query) {
-				var xhr = new XMLHttpRequest();
-				xhr.open(this.config.method, this.config.url + query);
+			readyStateHandler: function(xhr, callback) {
+				var self = this;
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState !== 4) return;
 
-				this.readyStateHandler(xhr, this.xhrCallback);
+					if (xhr.status === 200) {
+						// Xhr success
+						// console.log('succ', xhr.response);
+						callback.call(self, xhr.response);
+					}
+					else {
+						// Xhr fail
+						console.log('fail');
+					}
+				};
+			},
 
-				xhr.send();
-				return xhr;
+			parse: function(res) {
+				var data;
+				try {
+					data = JSON.parse(res);
+				}
+				catch (e) {
+					console.log('failed json parse');
+				}
+
+				this.src = data.img;
 			},
 
 			created: function() {
 				this.config = {
-					url: 'http://relevantxkcd.appspot.com/process?action=xkcd&query=',
+					url: 'http://localhost/proxy/index.php?',
 					method: 'GET'
 				};
 			},
 
 			ready: function() {
-				if (this.query)
-					this.request(this.query);
+				this.request();
 			}
 		});
 	</script>
