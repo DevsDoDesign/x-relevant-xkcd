@@ -1,12 +1,50 @@
 <!-- Import Polymer -->
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="x-relevant-xkcd">
-	<template></template>
+<polymer-element name="x-relevant-xkcd" attributes="keywords">
+	<template>
+		<img src="http://explainxkcd.com{{src}}">
+	</template>
 
 	<script>
 		Polymer('x-relevant-xkcd', {
+			src: '/wiki/images/6/6c/actors.png',
+			query: null,
 
+			readyStateHandler: function(xhr, callback) {
+				if (xhr.readyState !== 4) return;
+
+				if (xhr.status === 200) {
+					// Xhr success
+					console.log('suuc', xhr.response);
+				}
+				else {
+					// Xhr fail
+					console.log('fail');
+				}
+			},
+
+			request: function(query) {
+				var xhr = new XMLHttpRequest();
+				xhr.open(this.config.method, this.config.url + query);
+
+				this.readyStateHandler(xhr, this.xhrCallback);
+
+				xhr.send();
+				return xhr;
+			},
+
+			created: function() {
+				this.config = {
+					url: 'http://relevantxkcd.appspot.com/process?action=xkcd&query=',
+					method: 'GET'
+				};
+			},
+
+			ready: function() {
+				if (this.query)
+					this.request(this.query);
+			}
 		});
 	</script>
 </polymer-element>
