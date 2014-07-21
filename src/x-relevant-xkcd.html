@@ -3,6 +3,14 @@
 
 <polymer-element name="x-relevant-xkcd" attributes="id keywords caption">
 	<template>
+		<style>
+			:host {
+				font-family: Lucida, Helvetica, sans-serif;
+				font-weight: 500;
+				font-variant: small-caps;
+			}
+		</style>
+
 		<img src="{{src}}">
 		<p>{{caption}}</p>
 	</template>
