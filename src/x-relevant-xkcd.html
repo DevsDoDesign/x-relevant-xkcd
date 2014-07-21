@@ -25,10 +25,10 @@
 
 			createQuery: function() {
 				if (this.keywords) {
-					return 'relevant' + this.keywords.split(' ').join('%20');
+					return 'relevant=' + this.keywords.split(' ').join('%20');
 				}
 				else if (this.id) {
-					return 'comic' + this.id;
+					return 'comic=' + this.id;
 				}
 				else {
 					return 'comic';
@@ -42,7 +42,6 @@
 
 					if (xhr.status === 200) {
 						// Xhr success
-						// console.log('succ', xhr.response);
 						callback.call(self, xhr.response);
 					}
 					else {
@@ -56,12 +55,25 @@
 				var data;
 				try {
 					data = JSON.parse(res);
+					this.src = data.img;
 				}
 				catch (e) {
 					console.log('failed json parse');
-				}
 
-				this.src = data.img;
+					try {
+						this.src = this.parseRelevant(res);
+					}
+					catch (e) {
+						console.log('failed relevant parse');
+					}
+				}
+			},
+
+			parseRelevant: function(data) {
+				var split = data.split('\n');
+				var best = split[2].trim();
+				var splitBest = best.split(' ');
+				return 'http://explainxkcd.com' + splitBest[splitBest.length - 1];
 			},
 
 			created: function() {
