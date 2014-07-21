@@ -1,9 +1,10 @@
 <!-- Import Polymer -->
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
-<polymer-element name="x-relevant-xkcd" attributes="id keywords">
+<polymer-element name="x-relevant-xkcd" attributes="id keywords caption">
 	<template>
 		<img src="{{src}}">
+		<p>{{caption}}</p>
 	</template>
 
 	<script>
@@ -11,6 +12,7 @@
 			src: 'http://explainxkcd.com/wiki/images/6/6c/actors.png',
 			id: null,
 			keywords: null,
+			caption: '',
 
 			request: function() {
 				var xhr = new XMLHttpRequest();
