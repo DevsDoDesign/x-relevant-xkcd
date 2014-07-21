@@ -9,7 +9,7 @@
 
 	<script>
 		Polymer('x-relevant-xkcd', {
-			src: 'http://explainxkcd.com/wiki/images/6/6c/actors.png',
+			src: 'assets/loading.gif',
 			id: null,
 			keywords: null,
 			caption: '',
@@ -48,7 +48,7 @@
 					}
 					else {
 						// Xhr fail
-						console.log('fail');
+						console.log('fail fetch');
 					}
 				};
 			},
@@ -60,13 +60,11 @@
 					this.src = data.img;
 				}
 				catch (e) {
-					console.log('failed json parse');
-
 					try {
 						this.src = this.parseRelevant(res);
 					}
 					catch (e) {
-						console.log('failed relevant parse');
+						console.log('failed parse');
 					}
 				}
 			},
